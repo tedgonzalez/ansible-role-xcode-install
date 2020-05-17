@@ -1,2 +1,3 @@
 ---
-# defaults file for xcode-install
+xcode_version: 11.4.1
+xcode_xip_location: "Xcode_{{ xcode_version }}.xip"
