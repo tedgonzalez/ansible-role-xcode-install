@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: xcodeinstall
   author: Theodore Gonzalez
   description: Installs multiple versions of Xcode
   license: license (MIT)
