@@ -27,18 +27,38 @@ Dependencies
 None.
 
 ## Example Playbook
+
+
+#### install-xcode.yaml
+
     - hosts: localhost
       vars:
         xcode_version: 11.4.1
         xcode_xip_location: "Xcode_11.4.1.xip"
       roles:
-        - xcode-install
+        - tedgonzalez.xcodeinstall
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Usage:
+```
+ansible-playbook install-xcode.yaml -K
+```
 
-    - hosts: servers
+#### install-multiple-xcodes.yaml
+
+    - name: Run xcodeinstall role with 11.4.1
+      hosts: localhost
       roles:
-         - { role: username.rolename, x: 42 }
+        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.4.1 }
+        
+    - name: Run xcodeinstall role with 11.5.0
+      hosts: localhost
+      roles:
+        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.5.0 }
+
+Usage:
+```
+ansible-playbook install-multiple-xcodes.yaml -K
+```
 
 License
 ------------
