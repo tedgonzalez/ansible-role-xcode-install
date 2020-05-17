@@ -1,2 +1,52 @@
 ---
-# tasks file for xcode-install
+- name: Check if Xcode-{{ xcode_version }}.app already exists
+  stat:
+    path: "/Applications/Xcode-{{ xcode_version }}.app"
+  register: xcode_installed
+
+- name: Check if Xcode.app has been extracted in Caches
+  stat:
+    path: "~/Library/Caches/XcodeInstall/Xcode.app"
+  register: xcode_extracted
+
+- name: Check if Xcode_{{ xcode_version }}.xip is in target
+  stat:
+    path: "~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip"
+  register: xip_installer
+
+- name: Copy playbooks/files/Xcode_{{ xcode_version }}.xip to target machine
+  copy:
+    src: xcode_xip_location
+    dest: "~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip"
+  when:
+    - not xcode_installed.stat.exists
+    - not xcode_extracted.stat.exists
+    - not xip_installer.stat.exists
+
+- name: Check if Xcode is already extracted
+  stat:
+    path: "~/Library/Caches/XcodeInstall/Xcode.app"
+  register: xcode_extracted
+  when: not xcode_installed.stat.exists
+
+- name: Extract Xcode
+  command: xip -x Xcode_{{xcode_version}}.xip
+  args:
+    chdir: "~/Library/Caches/XcodeInstall"
+  when:
+    - not xcode_installed.stat.exists
+    - not xcode_extracted.stat.exists
+
+- name: Move Xcode.app
+  command: mv Xcode.app /Applications/Xcode-{{ xcode_version }}.app
+  args:
+    chdir: "~/Library/Caches/XcodeInstall"
+    creates: /Applications/Xcode-{{ xcode_version }}.app
+
+- name: Validate xcode
+  command: "/Applications/Xcode-{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -runFirstLaunch"
+  become: true
+
+- name: Accept license (optional)
+  shell: xcodebuild -license accept
+  become: true
