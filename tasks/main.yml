@@ -42,7 +42,9 @@
   args:
     chdir: "~/Library/Caches/XcodeInstall"
     creates: /Applications/Xcode-{{ xcode_version }}.app
-
+  when:
+    - not xcode_installed.stat.exists
+    
 - name: Validate xcode
   command: "/Applications/Xcode-{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -runFirstLaunch"
   become: true
