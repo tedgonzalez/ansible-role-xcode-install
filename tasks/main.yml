@@ -16,7 +16,7 @@
 
 - name: Copy playbooks/files/Xcode_{{ xcode_version }}.xip to target machine
   copy:
-    src: xcode_xip_location
+    src: "{{ xcode_xip_location }}"
     dest: "~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip"
   when:
     - not xcode_installed.stat.exists
