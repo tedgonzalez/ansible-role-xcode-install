@@ -60,6 +60,18 @@ Usage:
 ansible-playbook install-multiple-xcodes.yaml -K
 ```
 
+#### install-xcode-gm-seed.yaml
+
+    - name: Run xcodeinstall role with 11.5_GM_Seed
+      hosts: localhost
+      roles:
+        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.5, xcode_xip_location: "Xcode_11.5_GM_Seed.xip" }
+
+Usage:
+```
+ansible-playbook install-xcode-gm-seed.yaml -K
+```
+
 License
 ------------
 
