@@ -1,12 +1,12 @@
-Role Name
+Ansible Role: XcodeInstall
 =========
 
-A brief description of the role goes here.
+This is used to install multiple xcode versions in one machine.
 
 Requirements
 ------------
 
-None.
+- The installer (.xip file) should be in `files` or specify it in `xcode_xip_location`
 
 Role Variables
 --------------
@@ -26,7 +26,8 @@ Dependencies
 
 None.
 
-## Example Playbook
+Example Playbook
+----------------
 
 
 #### install-xcode.yaml
