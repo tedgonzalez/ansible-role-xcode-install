@@ -52,3 +52,8 @@
 - name: Accept license (optional)
   shell: xcodebuild -license accept
   become: true
+
+- name: Remove installer
+  file:
+    path: ~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip
+    state: absent
