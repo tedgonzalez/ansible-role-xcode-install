@@ -73,6 +73,18 @@ Usage:
 ansible-playbook install-xcode-gm-seed.yaml -K
 ```
 
+#### install-xcode-from-downloads.yaml
+
+    - name: Run xcodeinstall role with 11.7 from Downloads
+      hosts: localhost
+      roles:
+        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.7, xcode_xip_location: "~/Downloads/Xcode_11.7.xip" }
+
+Usage:
+```
+ansible-playbook install-xcode-gm-seed.yaml -K
+```
+
 License
 ------------
 
