@@ -50,7 +50,7 @@
   become: true
 
 - name: Accept license (optional)
-  shell: xcodebuild -license accept
+  shell: "/Applications/Xcode-{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -license accept"
   become: true
 
 - name: Remove installer
