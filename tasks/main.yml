@@ -8,10 +8,13 @@
   file:
     path: "/Applications/Xcode.app"
     state: absent
+  become: true
+  
 - name: Remove existing Xcode-beta.app
   file:
     path: "/Applications/Xcode-beta.app"
     state: absent
+  become: true
 
 - name: Check if {{ xcode_xip_name }} is ready for extraction
   stat:
@@ -33,6 +36,16 @@
   when:
     - not xcode_installed.stat.exists
 
+- name: Check if xcode.app is created
+  stat:
+    path: "/Applications/Xcode.app"
+  register: xcode_app_created
+
+- name: Check if xcode-beta.app is created
+  stat:
+    path: "/Applications/Xcode-beta.app"
+  register: xcode_beta_app_created
+
 - name: Move Xcode.app to {{ xcode_app_output_path }}
   command: mv Xcode.app {{ xcode_app_output_path }}
   args:
@@ -40,6 +53,16 @@
     creates: "{{ xcode_app_output_path }}"
   when:
     - not xcode_installed.stat.exists
+    - xcode_app_created.stat.exists
+
+- name: Move Xcode-beta.app to {{ xcode_app_output_path }}
+  command: mv Xcode-beta.app {{ xcode_app_output_path }}
+  args:
+    chdir: "/Applications"
+    creates: "{{ xcode_app_output_path }}"
+  when:
+    - not xcode_installed.stat.exists
+    - xcode_beta_app_created.stat.exists
     
 - name: Validate xcode
   command: "{{ xcode_app_output_path }}/Contents/Developer/usr/bin/xcodebuild -runFirstLaunch"
@@ -51,5 +74,5 @@
 
 - name: Remove installer {{ xcode_xip_path }}
   file:
-    path: "{{ xcode_xip_path }}"
+    path: "/Applications/{{ xcode_xip_name }}"
     state: absent
