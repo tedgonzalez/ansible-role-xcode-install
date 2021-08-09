@@ -6,20 +6,29 @@ This is used to install multiple xcode versions in one machine.
 Requirements
 ------------
 
-- The installer (.xip file) should be in `files` or specify it in `xcode_xip_location`
+- The installer (.xip file) should be in `files` or specify it in `xcode_xip_path`
 
 Role Variables
 --------------
 
 Available variables are listed below, along with default values (see [`defaults/main.yml`](defaults/main.yml)):
 
-Version of xcode to be installed to the remote host
+Name of the installer
 
-    xcode_version: 11.4.1
+    xcode_xip_name: "Xcode_13_beta_4.xip"
 
-Location of xip inside files directory or an absolute path in the local host
+Path of the installer in local host
 
-    xcode_xip_location: "Xcode_{{ xcode_version }}.xip"
+    xcode_xip_path: "~/Downloads/Xcode_13_beta_4.xip"
+
+Path of the installer in local host relative to files directory 
+
+    xcode_xip_path: "Xcode_13_beta_4.xip"
+
+
+Path of the installed app
+
+    xcode_app_output_path: "/Applications/Xcode-13-beta-4.app"
 
 Dependencies
 ------------
@@ -34,8 +43,9 @@ Example Playbook
 
     - hosts: localhost
       vars:
-        xcode_version: 11.4.1
-        xcode_xip_location: "Xcode_11.4.1.xip"
+        xcode_xip_name: "Xcode_13.0.xip"
+        xcode_xip_path: "~/Downloads/Xcode_13.0.xip"
+        xcode_app_output_path: "/Applications/Xcode-13.0.app"
       roles:
         - tedgonzalez.xcodeinstall
 
@@ -49,12 +59,22 @@ ansible-playbook install-xcode.yaml -K
     - name: Run xcodeinstall role with 11.4.1
       hosts: localhost
       roles:
-        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.4.1 }
+        - { 
+            role: tedgonzalez.xcodeinstall, 
+            xcode_xip_name: "Xcode_13.0.xip"
+            xcode_xip_path: "~/Downloads/Xcode_13.0.xip"
+            xcode_app_output_path: "/Applications/Xcode-13.0.app" 
+        }
         
     - name: Run xcodeinstall role with 11.5.0
       hosts: localhost
       roles:
-        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.5.0 }
+        - { 
+            role: tedgonzalez.xcodeinstall,
+            xcode_xip_name: "Xcode_13_beta_4.xip"
+            xcode_xip_path: "~/Downloads/Xcode_13_beta_4.xip"
+            xcode_app_output_path: "/Applications/Xcode-13.0-beta-4.app"
+        }
 
 Usage:
 ```
@@ -66,20 +86,12 @@ ansible-playbook install-multiple-xcodes.yaml -K
     - name: Run xcodeinstall role with 11.5_GM_Seed
       hosts: localhost
       roles:
-        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.5, xcode_xip_location: "Xcode_11.5_GM_Seed.xip" }
-
-Usage:
-```
-ansible-playbook install-xcode-gm-seed.yaml -K
-```
-
-#### install-xcode-from-downloads.yaml
-
-    - name: Run xcodeinstall role with 11.7 from Downloads
-      hosts: localhost
-      roles:
-        - { role: tedgonzalez.xcodeinstall, xcode_version: 11.7, xcode_xip_location: "~/Downloads/Xcode_11.7.xip" }
-
+        - { 
+            role: tedgonzalez.xcodeinstall,
+            xcode_xip_name: "Xcode_11.5_GM_Seed.xip"
+            xcode_xip_path: "~/Downloads/Xcode_11.5_GM_Seed.xip"
+            xcode_app_output_path: "/Applications/Xcode-11.5-gm-seed.app"
+        }
 Usage:
 ```
 ansible-playbook install-xcode-gm-seed.yaml -K

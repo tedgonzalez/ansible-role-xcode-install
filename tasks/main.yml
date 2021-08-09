@@ -1,59 +1,55 @@
 ---
-- name: Check if Xcode-{{ xcode_version }}.app already exists
+- name: Check if {{ xcode_app_output_path }} already exists
   stat:
-    path: "/Applications/Xcode-{{ xcode_version }}.app"
+    path: "{{ xcode_app_output_path }}"
   register: xcode_installed
 
-- name: Check if Xcode.app has been extracted in Caches
-  stat:
-    path: "~/Library/Caches/XcodeInstall/Xcode.app"
-  register: xcode_extracted
+- name: Remove existing Xcode.app
+  file:
+    path: "/Applications/Xcode.app"
+    state: absent
+- name: Remove existing Xcode-beta.app
+  file:
+    path: "/Applications/Xcode-beta.app"
+    state: absent
 
-- name: Check if Xcode_{{ xcode_version }}.xip is in target
+- name: Check if {{ xcode_xip_name }} is ready for extraction
   stat:
-    path: "~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip"
+    path: "/Applications/{{ xcode_xip_name }}"
   register: xip_installer
 
-- name: Copy playbooks/files/Xcode_{{ xcode_version }}.xip to target machine
+- name: Copy {{ xcode_xip_name }} to target machine (from playbooks/files/ if relative)
   copy:
-    src: "{{ xcode_xip_location }}"
-    dest: "~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip"
+    src: "{{ xcode_xip_path }}"
+    dest: "/Applications/{{ xcode_xip_name }}"
   when:
     - not xcode_installed.stat.exists
-    - not xcode_extracted.stat.exists
     - not xip_installer.stat.exists
 
-- name: Check if Xcode is already extracted
-  stat:
-    path: "~/Library/Caches/XcodeInstall/Xcode.app"
-  register: xcode_extracted
-  when: not xcode_installed.stat.exists
-
-- name: Extract Xcode
-  command: xip -x Xcode_{{xcode_version}}.xip
+- name: Extract {{ xcode_xip_name }}
+  command: xip -x {{ xcode_xip_name }}
   args:
-    chdir: "~/Library/Caches/XcodeInstall"
+    chdir: "/Applications"
   when:
     - not xcode_installed.stat.exists
-    - not xcode_extracted.stat.exists
 
-- name: Move Xcode.app
-  command: mv Xcode.app /Applications/Xcode-{{ xcode_version }}.app
+- name: Move Xcode.app to {{ xcode_app_output_path }}
+  command: mv Xcode.app {{ xcode_app_output_path }}
   args:
-    chdir: "~/Library/Caches/XcodeInstall"
-    creates: /Applications/Xcode-{{ xcode_version }}.app
+    chdir: "/Applications"
+    creates: "{{ xcode_app_output_path }}"
   when:
     - not xcode_installed.stat.exists
     
 - name: Validate xcode
-  command: "/Applications/Xcode-{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -runFirstLaunch"
+  command: "{{ xcode_app_output_path }}/Contents/Developer/usr/bin/xcodebuild -runFirstLaunch"
   become: true
 
 - name: Accept license (optional)
-  shell: "/Applications/Xcode-{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -license accept"
+  shell: "{{ xcode_app_output_path }}/Contents/Developer/usr/bin/xcodebuild -license accept"
   become: true
 
-- name: Remove installer
+- name: Remove installer {{ xcode_xip_path }}
   file:
-    path: ~/Library/Caches/XcodeInstall/Xcode_{{ xcode_version }}.xip
+    path: "{{ xcode_xip_path }}"
     state: absent
